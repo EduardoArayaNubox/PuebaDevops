@@ -50,11 +50,11 @@ jobs:
       - run: echo "Notificaciones de Slack"
       - slack/notify:
           event: fail
-          branch_pattern: /develop/      
+          branch_pattern: develop      
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: /develop/ 
+          branch_pattern: develop 
           template: success_tagged_deploy_1
 
   test:
@@ -101,11 +101,11 @@ jobs:
       - run: echo "Notificaciones de Slack"
       - slack/notify:
           event: fail
-          branch_pattern: /develop/       
+          branch_pattern: develop       
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: /develop/ 
+          branch_pattern: develop 
           template: success_tagged_deploy_1
 
   publish-on-artifactory:
@@ -139,11 +139,11 @@ jobs:
       - run: echo "Notificaciones de Slack"
       - slack/notify:
           event: fail
-          branch_pattern: /develop/       
+          branch_pattern: develop       
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: /develop/ 
+          branch_pattern: develop 
           template: success_tagged_deploy_1
   
   success-notify:    
@@ -154,11 +154,11 @@ jobs:
       - run: echo "Notificaciones de Slack"
       - slack/notify:
           event: fail
-          branch_pattern: /develop/        
+          branch_pattern: develop        
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: /develop/ 
+          branch_pattern: develop 
           template: success_tagged_deploy_1
            
 
