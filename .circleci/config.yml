@@ -134,12 +134,7 @@ jobs:
       - slack/notify:
           event: pass
           branch_pattern: master
-          channel: C01QKTYGUL8  
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          branch_pattern: master 
-
+          channel: C01QKTYGUL8 
           template: basic_success_1
 
   publish-on-artifactory:
@@ -192,10 +187,6 @@ jobs:
           event: pass
           branch_pattern: master
           channel: C01QKTYGUL8 
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          branch_pattern: master
           template: basic_success_1
           
   
@@ -227,10 +218,6 @@ jobs:
           event: pass
           branch_pattern: master
           channel: C01QKTYGUL8      
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          branch_pattern: master
           template: basic_success_1
            
 
