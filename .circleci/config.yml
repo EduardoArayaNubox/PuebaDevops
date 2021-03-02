@@ -236,7 +236,7 @@ workflows:
           filters:
             branches:
               only: /feature.*|master.*|develop/
-     - publish-on-artifactory:
+      - publish-on-artifactory:
           requires:
             - test
           filters:
