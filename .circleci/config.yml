@@ -8,11 +8,12 @@ version: 2.1
 orbs:
   artifactory-orb: jfrog/artifactory-orb@1.0.1
   aws-ecr: circleci/aws-ecr@6.15.3
+  jira: circleci/jira@1.3.1
 
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:11-jdk
+      - image: circleci/openjdk:11-jdk       
 
     working_directory: ~/repo
 
@@ -45,6 +46,14 @@ jobs:
           root: /home/circleci/repo
           paths:
             - build/libs/*
+            
+      - run: echo "Notificaciones de Slack"
+      - slack/notify:
+          event: fail      
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
   test:
     docker:
@@ -86,6 +95,14 @@ jobs:
           path: ~/test-results
       - store_artifacts:
           path: ~/test-results/junit 
+          
+      - run: echo "Notificaciones de Slack"
+      - slack/notify:
+          event: fail      
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
   publish-on-artifactory:
     docker:
@@ -114,6 +131,26 @@ jobs:
       - run: ./jfrog rt gradle-config --use-wrapper=true --repo-resolve=remote-backend-dev --server-id-resolve=Default-Server --repo-deploy=local-backend-dev --server-id-deploy=Default-Server
 
       - run: ./jfrog rt gradle clean build artifactoryPublish -b build.gradle
+      
+      - run: echo "Notificaciones de Slack"
+      - slack/notify:
+          event: fail      
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
+  
+  success-notify:    
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+    
+      - slack/notify:
+          event: fail      
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1    
            
 
 workflows:
@@ -152,3 +189,6 @@ workflows:
           filters:
             branches:
               only: develop
+      - success-notify:
+          requires:
+            - aws-ecr/build-and-push-image
