@@ -47,7 +47,7 @@ jobs:
           paths:
             - build/libs/*
             
-      - run: echo "Notificaciones de Slack"
+      - run: echo "Notificaciones de Slack Develop"
       - slack/notify:
           event: fail
           branch_pattern: develop      
@@ -55,6 +55,16 @@ jobs:
       - slack/notify:
           event: pass
           branch_pattern: develop 
+          template: basic_success_1
+          
+       - run: echo "Notificaciones de Slack Master"
+      - slack/notify:
+          event: fail
+          branch_pattern: master      
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          branch_pattern: master 
           template: basic_success_1
 
   test:
@@ -106,7 +116,17 @@ jobs:
       - slack/notify:
           event: pass
           branch_pattern: develop 
-          template: success_tagged_deploy_1
+          template: basic_success_1
+          
+      - run: echo "Notificaciones de Slack Master"
+      - slack/notify:
+          event: fail
+          branch_pattern: master      
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          branch_pattern: master 
+          template: basic_success_1
 
   publish-on-artifactory:
     docker:
@@ -144,7 +164,18 @@ jobs:
       - slack/notify:
           event: pass
           branch_pattern: develop 
-          template: success_tagged_deploy_1
+          template: basic_success_1
+          
+      - run: echo "Notificaciones de Slack Master"
+      - slack/notify:
+          event: fail
+          branch_pattern: master      
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          branch_pattern: master 
+          template: basic_success_1
+          
   
   success-notify:    
     docker:
@@ -159,7 +190,17 @@ jobs:
       - slack/notify:
           event: pass
           branch_pattern: develop 
-          template: success_tagged_deploy_1
+          template: basic_success_1
+          
+      - run: echo "Notificaciones de Slack Master"
+      - slack/notify:
+          event: fail
+          branch_pattern: master      
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          branch_pattern: master 
+          template: basic_success_1
            
 
 workflows:
