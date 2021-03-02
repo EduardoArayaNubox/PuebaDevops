@@ -7,6 +7,7 @@ version: 2.1
 
 orbs:
   artifactory-orb: jfrog/artifactory-orb@1.0.1
+  aws-ecr: circleci/aws-ecr@6.15.3
 
 jobs:
   build:
@@ -75,8 +76,16 @@ jobs:
       # run tests!
       - run: gradle test jacocoTestReport
 
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
+          when: always
       - store_test_results:
-          path: build
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-results/junit 
 
   publish-on-artifactory:
     docker:
@@ -106,31 +115,40 @@ jobs:
 
       - run: ./jfrog rt gradle clean build artifactoryPublish -b build.gradle
            
-            
-
-  publish-image-ECR:
-    docker:
-      - image: circleci/openjdk:11-jdk
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            - v1-dependencies-
-      
-      - run: gradle build
 
 workflows:
   build_and_test:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only: /feature.*|master.*|develop/
       - test:
           requires:
             - build
+          filters:
+            branches:
+              only: /feature.*|master.*|develop/
       - publish-on-artifactory:
           requires:
             - test
+          filters:
+            branches:
+              only: develop
+      - aws-ecr/build-and-push-image:
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          create-repo: false
+          checkout: true
+          no-output-timeout: 20m
+          path: .
+          region: AWS_DEFAULT_REGION
+          repo: '$CIRCLE_PROJECT_REPONAME'
+          skip-when-tags-exist: true
+          tag: '${CIRCLE_SHA1:0:7},latest'
+          requires:
+            - publish-on-artifactory
+          filters:
+            branches:
+              only: develop
