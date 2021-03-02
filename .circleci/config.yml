@@ -219,13 +219,8 @@ jobs:
           event: pass
           branch_pattern: master
           channel: C01QKTYGUL8      
-          template: basic_success_1
-          
-  jira:
-    docker:
-      - image: 'circleci/node:10'
-    steps:
-      - run: echo "Notificacion de Jira"  
+          template: basic_success_1   
+
            
 
 workflows:
@@ -234,20 +229,14 @@ workflows:
       - build:
           filters:
             branches:
-              only: /feature.*|master.*|develop/ 
-      - jira:
-          post-steps:
-            - jira/notify                               
+              only: /feature.*|master.*|develop/                            
       - test:
           requires:
             - build
           filters:
             branches:
               only: /feature.*|master.*|develop/
-      - jira:
-          post-steps:
-            - jira/notify       
-      - publish-on-artifactory:
+     - publish-on-artifactory:
           requires:
             - test
           filters:
