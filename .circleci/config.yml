@@ -60,11 +60,14 @@ jobs:
       - run: echo "Notificaciones de Slack Master"
       - slack/notify:
           event: fail
-          branch_pattern: master      
+
+          branch_pattern: master
+          channel: C01QKTYGUL8      
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: master 
+          branch_pattern: master
+          channel: C01QKTYGUL8
           template: basic_success_1
 
   test:
@@ -115,17 +118,24 @@ jobs:
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: develop 
+          branch_pattern: develop  
           template: basic_success_1
           
       - run: echo "Notificaciones de Slack Master"
       - slack/notify:
           event: fail
-          branch_pattern: master      
+          branch_pattern: master
+          channel: C01QKTYGUL8            
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          branch_pattern: master
+          channel: C01QKTYGUL8  
           template: basic_fail_1
       - slack/notify:
           event: pass
           branch_pattern: master 
+
           template: basic_success_1
 
   publish-on-artifactory:
@@ -169,11 +179,17 @@ jobs:
       - run: echo "Notificaciones de Slack Master"
       - slack/notify:
           event: fail
-          branch_pattern: master      
+          branch_pattern: master
+          channel: C01QKTYGUL8            
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: master 
+          branch_pattern: master
+          channel: C01QKTYGUL8 
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          branch_pattern: master
           template: basic_success_1
           
   
@@ -195,11 +211,18 @@ jobs:
       - run: echo "Notificaciones de Slack Master"
       - slack/notify:
           event: fail
-          branch_pattern: master      
+
+          branch_pattern: master
+          channel: C01QKTYGUL8            
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: master 
+          branch_pattern: master
+          channel: C01QKTYGUL8      
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          branch_pattern: master
           template: basic_success_1
            
 
