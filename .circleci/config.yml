@@ -254,10 +254,10 @@ workflows:
               only: develop
       - aws-ecr:          
           requires:
-            - publish-on-artifactory
+            - v
           filters:
             branches:
               only: develop
       - success-notify:
           requires:
-            - aws-ecr/build-and-push-image
+            - aws-ecr
