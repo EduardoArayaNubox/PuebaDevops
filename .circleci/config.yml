@@ -9,11 +9,13 @@ orbs:
   artifactory-orb: jfrog/artifactory-orb@1.0.1
   aws-ecr: circleci/aws-ecr@6.15.3
   slack: circleci/slack@4.3.0
+  jira: circleci/jira@1.3.1
 
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:11-jdk       
+      - image: circleci/openjdk:11-jdk  
+      - image: 'circleci/node:10'     
 
     working_directory: ~/repo
 
@@ -70,6 +72,9 @@ jobs:
           branch_pattern: master
           channel: C01QKTYGUL8
           template: basic_success_1
+
+      - jira/notify
+
 
   test:
     docker:
@@ -135,6 +140,8 @@ jobs:
           branch_pattern: master
           channel: C01QKTYGUL8 
           template: basic_success_1
+          
+      - jira/notify
 
   publish-on-artifactory:
     docker:
@@ -188,6 +195,9 @@ jobs:
           channel: C01QKTYGUL8 
           template: basic_success_1
           
+          
+      - jira/notify
+          
   
   success-notify:    
     docker:
@@ -216,7 +226,9 @@ jobs:
           event: pass
           branch_pattern: master
           channel: C01QKTYGUL8      
-          template: basic_success_1           
+          template: basic_success_1   
+
+      - jira/notify          
 
 workflows:
   build_and_test:
@@ -225,6 +237,8 @@ workflows:
           filters:
             branches:
               only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
+              - jira/notify:
+                  environment_type: Build                
       - test:
           requires:
             - build
