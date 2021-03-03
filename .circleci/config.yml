@@ -50,12 +50,12 @@ jobs:
       - run: echo "Notificaciones de Slack Develop"
       - slack/notify:
           event: fail
-          branch_pattern: /feature\/.*|master|develop|hotfix\/.*|release\/.*/             
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/            
           channel: C01PQ27R3N2            
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: /feature\/.*|master|develop|hotfix\/.*|release\/.*/    
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/    
           channel: C01PQ27R3N2           
           template: basic_success_1
           
@@ -115,12 +115,12 @@ jobs:
       - run: echo "Notificaciones de Slack"
       - slack/notify:
           event: fail
-          branch_pattern: /feature\/.*|master|develop|hotfix\/.*|release\/.*/    
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/    
           channel: C01PQ27R3N2           
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: /feature\/.*|master|develop|hotfix\/.*|release\/.*/  
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/ 
           channel: C01PQ27R3N2           
           template: basic_success_1
           
@@ -167,12 +167,12 @@ jobs:
       - run: echo "Notificaciones de Slack"
       - slack/notify:
           event: fail
-          branch_pattern: /feature\/.*|master|develop|hotfix\/.*|release\/.*/      
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/      
           channel: C01PQ27R3N2           
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: /feature\/.*|master|develop|hotfix\/.*|release\/.*/     
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/     
           channel: C01PQ27R3N2           
           template: basic_success_1
           
@@ -197,12 +197,12 @@ jobs:
       - run: echo "Notificaciones de Slack"
       - slack/notify:
           event: fail
-          branch_pattern: /feature\/.*|master|develop|hotfix\/.*|release\/.*/     
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/     
           channel: C01PQ27R3N2           
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: /feature\/.*|master|develop|hotfix\/.*|release\/.*/     
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/   
           channel: C01PQ27R3N2           
           template: basic_success_1
           
@@ -216,22 +216,7 @@ jobs:
           event: pass
           branch_pattern: master
           channel: C01QKTYGUL8      
-          template: basic_success_1
-          
-  artifactory:    
-    docker:
-      - image: 'cimg/base:stable'
-    steps:
-    
-      - run: echo "ArtiFactory"
-      
-  aws-ecr:    
-    docker:
-      - image: 'cimg/base:stable'
-    steps:
-    
-      - run: echo "AWS-ECR"
-           
+          template: basic_success_1           
 
 workflows:
   build_and_test:
@@ -246,18 +231,29 @@ workflows:
           filters:
             branches:
               only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
-      - artifactory:
+      - publish-on-artifactory:
           requires:
             - test
           filters:
             branches:
-              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
-      - aws-ecr:          
+              only: develop
+      - aws-ecr/build-and-push-image:
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          create-repo: false
+          checkout: true
+          no-output-timeout: 20m
+          path: .
+          region: AWS_DEFAULT_REGION
+          repo: '$CIRCLE_PROJECT_REPONAME'
+          skip-when-tags-exist: true
+          tag: '${CIRCLE_SHA1:0:7},latest'
           requires:
-            - artifactory
+            - publish-on-artifactory
           filters:
             branches:
-              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
+              only: develop
       - success-notify:
           requires:
-            - aws-ecr
+            - aws-ecr/build-and-push-image
