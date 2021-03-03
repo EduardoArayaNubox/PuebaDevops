@@ -230,7 +230,7 @@ jobs:
 
       - jira/notify
 
- artifactory:
+  artifactory:
     docker:
       - image: circleci/openjdk:11-jdk  
       
@@ -238,7 +238,7 @@ jobs:
 
       - jira/notify      
 
- ecr:
+  ecr:
     docker:
       - image: circleci/openjdk:11-jdk  
       
