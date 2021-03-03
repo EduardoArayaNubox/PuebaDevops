@@ -50,12 +50,12 @@ jobs:
       - run: echo "Notificaciones de Slack Develop"
       - slack/notify:
           event: fail
-          branch_pattern: develop|feature/.*|hotfix/.*|release/.*              
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/            
           channel: C01PQ27R3N2            
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: develop|feature/.*|hotfix/.*|release/.*    
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/    
           channel: C01PQ27R3N2           
           template: basic_success_1
           
@@ -115,12 +115,12 @@ jobs:
       - run: echo "Notificaciones de Slack"
       - slack/notify:
           event: fail
-          branch_pattern: develop|feature/.*|hotfix/.*|release/.*  
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/    
           channel: C01PQ27R3N2           
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: develop|feature/.*|hotfix/.*|release/.* 
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/ 
           channel: C01PQ27R3N2           
           template: basic_success_1
           
@@ -167,12 +167,12 @@ jobs:
       - run: echo "Notificaciones de Slack"
       - slack/notify:
           event: fail
-          branch_pattern: develop|feature/.*|hotfix/.*|release/.*    
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/      
           channel: C01PQ27R3N2           
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: develop|feature/.*|hotfix/.*|release/.*    
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/     
           channel: C01PQ27R3N2           
           template: basic_success_1
           
@@ -197,19 +197,18 @@ jobs:
       - run: echo "Notificaciones de Slack"
       - slack/notify:
           event: fail
-          branch_pattern: develop|feature/.*|hotfix/.*|release/.*    
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/     
           channel: C01PQ27R3N2           
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: develop|feature/.*|hotfix/.*|release/.*    
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/   
           channel: C01PQ27R3N2           
           template: basic_success_1
           
       - run: echo "Notificaciones de Slack Master"
       - slack/notify:
           event: fail
-
           branch_pattern: master
           channel: C01QKTYGUL8            
           template: basic_fail_1
@@ -217,8 +216,7 @@ jobs:
           event: pass
           branch_pattern: master
           channel: C01QKTYGUL8      
-          template: basic_success_1
-           
+          template: basic_success_1           
 
 workflows:
   build_and_test:
@@ -226,13 +224,13 @@ workflows:
       - build:
           filters:
             branches:
-              only: /feature.*|master.*|develop/
+              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
       - test:
           requires:
             - build
           filters:
             branches:
-              only: /feature.*|master.*|develop/
+              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
       - publish-on-artifactory:
           requires:
             - test
