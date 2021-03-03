@@ -50,14 +50,12 @@ jobs:
       - run: echo "Notificaciones de Slack Develop"
       - slack/notify:
           event: fail
-          branch_pattern: develop
-          branch_pattern: /feature.*          
+          branch_pattern: develop|/feature.*               
           channel: C01PQ27R3N2            
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: develop
-          branch_pattern: /feature.*
+          branch_pattern: develop|/feature.*
           channel: C01PQ27R3N2           
           template: basic_success_1
           
