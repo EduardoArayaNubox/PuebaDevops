@@ -47,19 +47,19 @@ jobs:
           paths:
             - build/libs/*
             
-      - run: echo "Notificaciones de Slack Develop"
+      - run: echo "Notificaciones de Slack No Productivas"
       - slack/notify:
           event: fail
-          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/            
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*            
           channel: C01PQ27R3N2            
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/    
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*    
           channel: C01PQ27R3N2           
           template: basic_success_1
           
-      - run: echo "Notificaciones de Slack Master"
+      - run: echo "Notificaciones de Slack Productivas"
       - slack/notify:
           event: fail
           branch_pattern: master
@@ -112,19 +112,19 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit 
           
-      - run: echo "Notificaciones de Slack"
+      - run: echo "Notificaciones de No Productivas"
       - slack/notify:
           event: fail
-          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/    
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*    
           channel: C01PQ27R3N2           
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/ 
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.* 
           channel: C01PQ27R3N2           
           template: basic_success_1
           
-      - run: echo "Notificaciones de Slack Master"
+      - run: echo "Notificaciones de Slack Productivas"
       - slack/notify:
           event: fail
           branch_pattern: master
@@ -164,19 +164,19 @@ jobs:
 
       - run: ./jfrog rt gradle clean build artifactoryPublish -b build.gradle
       
-      - run: echo "Notificaciones de Slack"
+      - run: echo "Notificaciones de No Productivas"
       - slack/notify:
           event: fail
-          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/      
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*      
           channel: C01PQ27R3N2           
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/     
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*     
           channel: C01PQ27R3N2           
           template: basic_success_1
           
-      - run: echo "Notificaciones de Slack Master"
+      - run: echo "Notificaciones de Slack Productivas"
       - slack/notify:
           event: fail
           branch_pattern: master
@@ -194,19 +194,19 @@ jobs:
       - image: 'cimg/base:stable'
     steps:
     
-      - run: echo "Notificaciones de Slack"
+      - run: echo "Notificaciones de No Productivas"
       - slack/notify:
           event: fail
-          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/     
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*     
           channel: C01PQ27R3N2           
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*/   
+          branch_pattern: /feature\/.*|develop|hotfix\/.*|release\/.*   
           channel: C01PQ27R3N2           
           template: basic_success_1
           
-      - run: echo "Notificaciones de Slack Master"
+      - run: echo "Notificaciones de Slack Productivas"
       - slack/notify:
           event: fail
           branch_pattern: master
