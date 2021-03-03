@@ -226,13 +226,13 @@ workflows:
       - build:
           filters:
             branches:
-              only: /feature.*|master.*|develop/
+              only: /feature\/*|master|develop|hotfix\/*|release\/*/
       - test:
           requires:
             - build
           filters:
             branches:
-              only: /feature.*|master.*|develop/
+              only: /feature\/*|master|develop|hotfix\/*|release\/*/
       - publish-on-artifactory:
           requires:
             - test
