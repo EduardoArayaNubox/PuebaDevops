@@ -228,7 +228,23 @@ jobs:
           channel: C01QKTYGUL8      
           template: basic_success_1   
 
-      - jira/notify          
+      - jira/notify
+
+ artifactory:
+    docker:
+      - image: circleci/openjdk:11-jdk  
+      
+      - run: echo "artifactory" 
+
+      - jira/notify      
+
+ ecr:
+    docker:
+      - image: circleci/openjdk:11-jdk  
+      
+      - run: echo "ecr"  
+
+      - jira/notify      
 
 workflows:
   build_and_test:
@@ -251,33 +267,26 @@ workflows:
               - jira/notify:
                   job_type: deployment
                   environment_type: testing    
-      - publish-on-artifactory:
+      - artifactory:
           requires:
             - test
           filters:
             branches:
-              only: develop
+              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
           post-steps:
               - jira/notify:
                   job_type: deployment
                   environment_type: production  
-      - aws-ecr/build-and-push-image:
-          account-url: AWS_ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          create-repo: false
-          checkout: true
-          no-output-timeout: 20m
-          path: .
-          region: AWS_DEFAULT_REGION
-          repo: '$CIRCLE_PROJECT_REPONAME'
-          skip-when-tags-exist: true
-          tag: '${CIRCLE_SHA1:0:7},latest'
+      - ecr:         
           requires:
-            - publish-on-artifactory
+            - artifactory
           filters:
             branches:
-              only: develop
+              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
       - success-notify:
           requires:
-            - aws-ecr/build-and-push-image
+            - ecr
+          post-steps:
+              - jira/notify:
+                  job_type: deployment
+                  environment_type: production 
