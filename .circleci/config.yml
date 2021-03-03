@@ -14,7 +14,8 @@ orbs:
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:11-jdk       
+      - image: circleci/openjdk:11-jdk
+      - image: 'circleci/node:10'      
 
     working_directory: ~/repo
 
@@ -74,9 +75,11 @@ jobs:
           
       - jira/notify
 
+
   test:
     docker:
       - image: circleci/openjdk:11-jdk
+      - image: 'circleci/node:10'
       
     working_directory: ~/repo
 
@@ -141,9 +144,11 @@ jobs:
           
       - jira/notify
 
+
   publish-on-artifactory:
     docker:
       - image: circleci/openjdk:11-jdk
+      - image: 'circleci/node:10'
 
     working_directory: ~/repo
 
@@ -194,6 +199,7 @@ jobs:
           template: basic_success_1
           
       - jira/notify
+
           
   
   success-notify:    
@@ -222,10 +228,11 @@ jobs:
       - slack/notify:
           event: pass
           branch_pattern: master
-          channel: C01QKTYGUL8      
+          channel: C01QKTYGUL8 
           template: basic_success_1
 
       - jira/notify          
+
 
 workflows:
   build_and_test:
@@ -233,12 +240,11 @@ workflows:
       - build:
           filters:
             branches:
-              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
-              
+              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/              
           post-steps:
               - jira/notify:
                   job_type: deployment
-                  environment_type: development
+                  environment_type: development                       
       - test:
           requires:
             - build
