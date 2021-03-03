@@ -254,7 +254,7 @@ workflows:
               only: develop
       - aws-ecr:          
           requires:
-            - v
+            - artifactory
           filters:
             branches:
               only: develop
