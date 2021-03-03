@@ -226,7 +226,7 @@ workflows:
       - build:
           filters:
             branches:
-              only: /feature\/*|master|develop|hotfix\/*|release\/*/
+              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
       - test:
           requires:
             - build
