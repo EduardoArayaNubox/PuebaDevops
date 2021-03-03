@@ -9,6 +9,7 @@ orbs:
   artifactory-orb: jfrog/artifactory-orb@1.0.1
   aws-ecr: circleci/aws-ecr@6.15.3
   slack: circleci/slack@4.3.0
+  jira: circleci/jira@1.3.1
 
 jobs:
   build:
@@ -70,6 +71,8 @@ jobs:
           branch_pattern: master
           channel: C01QKTYGUL8
           template: basic_success_1
+          
+      - jira/notify
 
   test:
     docker:
@@ -135,6 +138,8 @@ jobs:
           branch_pattern: master
           channel: C01QKTYGUL8 
           template: basic_success_1
+          
+      - jira/notify
 
   publish-on-artifactory:
     docker:
@@ -188,6 +193,8 @@ jobs:
           channel: C01QKTYGUL8 
           template: basic_success_1
           
+      - jira/notify
+          
   
   success-notify:    
     docker:
@@ -216,7 +223,9 @@ jobs:
           event: pass
           branch_pattern: master
           channel: C01QKTYGUL8      
-          template: basic_success_1           
+          template: basic_success_1
+
+      - jira/notify          
 
 workflows:
   build_and_test:
@@ -225,18 +234,31 @@ workflows:
           filters:
             branches:
               only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
+              
+          post-steps:
+              - jira/notify:
+                  job_type: deployment
+                  environment_type: development
       - test:
           requires:
             - build
           filters:
             branches:
-              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
+              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/              
+          post-steps:
+              - jira/notify:
+                  job_type: deployment
+                  environment_type: testing   
       - publish-on-artifactory:
           requires:
             - test
           filters:
             branches:
               only: develop
+          post-steps:
+              - jira/notify:
+                  job_type: deployment
+                  environment_type: production                 
       - aws-ecr/build-and-push-image:
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
@@ -256,4 +278,8 @@ workflows:
               only: develop
       - success-notify:
           requires:
-            - aws-ecr/build-and-push-image
+            - aws-ecr/build-and-push-image            
+          post-steps:
+              - jira/notify:
+                  job_type: deployment
+                  environment_type: production
