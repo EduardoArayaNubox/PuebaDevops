@@ -237,8 +237,9 @@ workflows:
           filters:
             branches:
               only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
+          post-steps:
               - jira/notify:
-                  environment_type: Build                
+                  environment_type: Build               
       - test:
           requires:
             - build
