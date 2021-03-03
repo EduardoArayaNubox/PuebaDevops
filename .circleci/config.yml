@@ -49,19 +49,19 @@ jobs:
           paths:
             - build/libs/*
             
-      - run: echo "Notificaciones de Slack Develop"
+      - run: echo "Notificaciones de Slack No Productivas"
       - slack/notify:
           event: fail
-          branch_pattern: develop 
+          branch_pattern: feature\/.*|develop|hotfix\/.*|release\/.*            
           channel: C01PQ27R3N2            
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: develop
+          branch_pattern: feature\/.*|develop|hotfix\/.*|release\/.*    
           channel: C01PQ27R3N2           
           template: basic_success_1
           
-      - run: echo "Notificaciones de Slack Master"
+      - run: echo "Notificaciones de Slack Productivas"
       - slack/notify:
           event: fail
           branch_pattern: master
@@ -118,19 +118,19 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit 
           
-      - run: echo "Notificaciones de Slack"
+      - run: echo "Notificaciones de No Productivas"
       - slack/notify:
           event: fail
-          branch_pattern: develop  
+          branch_pattern: feature\/.*|develop|hotfix\/.*|release\/.*    
           channel: C01PQ27R3N2           
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: develop
+          branch_pattern: feature\/.*|develop|hotfix\/.*|release\/.* 
           channel: C01PQ27R3N2           
           template: basic_success_1
           
-      - run: echo "Notificaciones de Slack Master"
+      - run: echo "Notificaciones de Slack Productivas"
       - slack/notify:
           event: fail
           branch_pattern: master
@@ -174,19 +174,19 @@ jobs:
 
       - run: ./jfrog rt gradle clean build artifactoryPublish -b build.gradle
       
-      - run: echo "Notificaciones de Slack"
+      - run: echo "Notificaciones de No Productivas"
       - slack/notify:
           event: fail
-          branch_pattern: develop
+          branch_pattern: feature\/.*|develop|hotfix\/.*|release\/.*      
           channel: C01PQ27R3N2           
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: develop
+          branch_pattern: feature\/.*|develop|hotfix\/.*|release\/.*     
           channel: C01PQ27R3N2           
           template: basic_success_1
           
-      - run: echo "Notificaciones de Slack Master"
+      - run: echo "Notificaciones de Slack Productivas"
       - slack/notify:
           event: fail
           branch_pattern: master
@@ -207,32 +207,32 @@ jobs:
       - image: 'cimg/base:stable'
     steps:
     
-      - run: echo "Notificaciones de Slack"
+      - run: echo "Notificaciones de No Productivas"
       - slack/notify:
           event: fail
-          branch_pattern: develop
+          branch_pattern: feature\/.*|develop|hotfix\/.*|release\/.*     
           channel: C01PQ27R3N2           
           template: basic_fail_1
       - slack/notify:
           event: pass
-          branch_pattern: develop
+          branch_pattern: feature\/.*|develop|hotfix\/.*|release\/.*   
           channel: C01PQ27R3N2           
           template: basic_success_1
           
-      - run: echo "Notificaciones de Slack Master"
+      - run: echo "Notificaciones de Slack Productivas"
       - slack/notify:
           event: fail
-
           branch_pattern: master
           channel: C01QKTYGUL8            
           template: basic_fail_1
       - slack/notify:
           event: pass
           branch_pattern: master
-          channel: C01QKTYGUL8      
-          template: basic_success_1   
+          channel: C01QKTYGUL8 
+          template: basic_success_1
 
-           
+      - jira/notify          
+
 
 workflows:
   build_and_test:
@@ -240,19 +240,31 @@ workflows:
       - build:
           filters:
             branches:
-              only: /feature.*|master.*|develop/                            
+              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/              
+          post-steps:
+              - jira/notify:
+                  job_type: deployment
+                  environment_type: development                       
       - test:
           requires:
             - build
           filters:
             branches:
-              only: /feature.*|master.*|develop/
+              only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/              
+          post-steps:
+              - jira/notify:
+                  job_type: deployment
+                  environment_type: testing   
       - publish-on-artifactory:
           requires:
             - test
           filters:
             branches:
               only: develop
+          post-steps:
+              - jira/notify:
+                  job_type: deployment
+                  environment_type: production                 
       - aws-ecr/build-and-push-image:
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
@@ -272,4 +284,8 @@ workflows:
               only: develop
       - success-notify:
           requires:
-            - aws-ecr/build-and-push-image
+            - aws-ecr/build-and-push-image            
+          post-steps:
+              - jira/notify:
+                  job_type: deployment
+                  environment_type: production
