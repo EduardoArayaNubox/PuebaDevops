@@ -239,7 +239,8 @@ workflows:
               only: /feature\/.*|master|develop|hotfix\/.*|release\/.*/
           post-steps:
               - jira/notify:
-                  environment:build                                
+                  job_type: deployment
+                  environment_type: development                             
       - test:
           requires:
             - build
