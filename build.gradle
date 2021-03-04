@@ -42,7 +42,7 @@ dependencies {
 
 jacocoTestReport {
     reports {
-        xml.enabled trueEEEE
+        xml.enabled true
     }
 }
 
